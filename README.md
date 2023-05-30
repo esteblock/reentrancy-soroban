@@ -1,8 +1,28 @@
 # reentrancy-soroban
 
+## How to use this repo?
+The reentrancy attack intent it's in `./evil_event_publisher/src/test.rs`
+You need to build the contracts in this order:
+
+```
+bash run.sh
+cd event_publisher
+make build
+make test
+cd ../vulnerable_bank
+make build
+make test
+cd ../evil_event_publisher
+make build
+make test
+```
+
+## Current state of reentrancy:
+
 Using: PREVIEW-9
 Current state of reentrancy:  not allowed
 
+## Current panic error:
 ```
 running 3 tests
 test test::test ... ok
@@ -31,16 +51,3 @@ Debug events (newest first):
 ```
 
 # Test by yourself
-
-```
-bash run.sh
-cd event_publisher
-make build
-make test
-cd ../vulnerable_bank
-make build
-make test
-cd ../evil_event_publisher
-make build
-make test
-```
