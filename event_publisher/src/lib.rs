@@ -4,7 +4,7 @@ pub struct EventPublisher;
 
 #[contractimpl]
 impl EventPublisher {
-    pub fn publish_event(env: Env, user: Address, amount: i128) {
+    pub fn publish_withdraw(env: Env, user: Address, amount: i128) {
         let topics = (Symbol::short("withdraw"), user);
         env.events().publish(topics, amount);
     }

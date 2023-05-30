@@ -10,7 +10,7 @@ fn test() {
     let client = EventPublisherClient::new(&env, &contract_id);
 
     let user = Address::random(&env);
-    client.publish_event(&user.clone(), &1_i128);
+    client.publish_withdraw(&user.clone(), &1_i128);
 
     assert_eq!(
         env.events().all(),
