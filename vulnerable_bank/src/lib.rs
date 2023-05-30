@@ -1,16 +1,23 @@
 #![no_std]
 use soroban_sdk::{contractimpl, contracttype, Address, Env};
 
+
 mod token {
     soroban_sdk::contractimport!(file = "../token/soroban_token_contract.wasm");
 }
 
-// mod test;
-// mod testutils;
+mod event_publisher {
+    soroban_sdk::contractimport!(
+        file = "../event_publisher/target/wasm32-unknown-unknown/release/event_publisher.wasm"
+    );
+}
+
+mod test;
+//mod testutils;
 
 #[derive(Clone)]
 #[contracttype]
-pub enum DataKey {
+pub enum DataKey {  
     Token,
     User(Address),
 }
@@ -69,18 +76,22 @@ impl VulnerableBank {
         let balance = get_user_deposited(&e, &user);
         set_user_deposited(&e, &user, &(balance + amount));
 
-        //let client = token::Client::new(&e, &get_token(&e));
-        //client.transfer(&user, &e.current_contract_address(), &amount);
+        let client = token::Client::new(&e, &get_token(&e));
+        client.transfer(&user, &e.current_contract_address(), &amount);
     }
 
-    pub fn withdraw(e: Env, user: Address, amount: i128) {
+    pub fn withdraw(e: Env, user: Address, amount: i128, event_publisher: Address) {
         assert!(amount > 0, "amount must be positive");
         let balance = get_user_deposited(&e, &user);
 
         assert!(balance >= amount, "balance should be greater than the amount requested");
 
+        let event_publisher_client = event_publisher::Client::new(&e, &event_publisher);
+        event_publisher_client.publish_withdraw(&user.clone(), &amount.clone());
+
+
         set_user_deposited(&e, &user, &(balance - amount));
-        transfer(&e, &user, &balance);
+        transfer(&e, &user, &amount);
 }
 
 }
